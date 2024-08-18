@@ -2,7 +2,10 @@
 
 
 #include "Character/AuraCharacter.h"
+#include "Player/AuraPlayerState.h"
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -24,8 +27,39 @@ AAuraCharacter::AAuraCharacter()
 	
 }
 
+void AAuraCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AAuraCharacter, AuraPlayerState);
+}
+
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	AuraLOG_S(Warning);
+}
+
+void AAuraCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	InitAbilityActorInfo();
+	
+}
+
+void AAuraCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	InitAbilityActorInfo();
+}
+
+void AAuraCharacter::InitAbilityActorInfo()
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState, this);
+	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
+	AttributeSet = AuraPlayerState->GetAttributeSet();
+	AuraLOG(Warning, TEXT("InitAbilityActorInfo is called"));
 }

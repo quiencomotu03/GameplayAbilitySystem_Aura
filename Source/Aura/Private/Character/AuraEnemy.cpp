@@ -20,6 +20,16 @@ AAuraEnemy::AAuraEnemy()
 	
 }
 
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(AbilitySystemComponent);
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	AuraLOG(Warning, TEXT("Ability System Component Initialized"));
+	
+}
+
 void AAuraEnemy::HighlightActor()
 {
 	//bHighlighted = true;

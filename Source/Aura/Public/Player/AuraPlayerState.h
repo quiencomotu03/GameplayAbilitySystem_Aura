@@ -21,11 +21,13 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
-protected:
-	
 	UPROPERTY()
-	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<class UAbilitySystemComponent> MyAbilitySystemComponent;
 
 	UPROPERTY()
 	TObjectPtr<class UAttributeSet> AttributeSet;
+
+protected:
+	
+	
 };

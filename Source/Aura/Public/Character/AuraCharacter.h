@@ -5,6 +5,7 @@
 #include "../Aura.h"
 #include "EngineMinimal.h"
 #include "Character/AuraCharacterBase.h"
+#include "Player/AuraPlayerState.h"
 #include "AuraCharacter.generated.h"
 
 /**
@@ -18,7 +19,10 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase
 public:
 
 	AAuraCharacter();
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+	
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm;
 
@@ -27,5 +31,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
+private:
+	void InitAbilityActorInfo();
 	
 };
