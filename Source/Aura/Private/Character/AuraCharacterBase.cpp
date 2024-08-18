@@ -31,10 +31,8 @@ void AAuraCharacterBase::Tick(float DeltaTime)
 
 }
 
-
-void AAuraCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	return AbilitySystemComponent;
 }
 

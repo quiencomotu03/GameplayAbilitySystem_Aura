@@ -4,6 +4,7 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -41,6 +42,12 @@ void AAuraPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
 }
 
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	CursorTrace();
+}
+
 void AAuraPlayerController::Move(const struct FInputActionValue& value)
 {
 	const FVector2d InputAxisVector = value.Get<FVector2d>();
@@ -56,4 +63,47 @@ void AAuraPlayerController::Move(const struct FInputActionValue& value)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 	
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			//Lastactor nullptr , This actor is not nullptr -> thisactor->highlight
+			ThisActor->HighlightActor();
+		}
+		else
+		{
+			//Cast - both are null, do nothing
+			
+		}
+	}
+	else //LastActor is valid
+	{
+		if  (ThisActor == nullptr)
+		{
+			LastActor->UnHighlightActor();
+		}
+		else
+		{
+			if (LastActor != ThisActor)//Both valid, but lastactor is not this actor
+			{
+				LastActor->UnHighlightActor(); // 이전 액터는 unhighlight
+				ThisActor->HighlightActor(); //this actor ->highlight
+			}
+			else //both are valid, and they are same
+			{
+				//Do nothing
+			}
+		}
+	}
 }

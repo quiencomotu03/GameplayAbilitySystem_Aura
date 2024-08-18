@@ -23,6 +23,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void PlayerTick(float DeltaTime) override;
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -32,5 +33,7 @@ private:
 	TObjectPtr<class UInputAction> MoveAction;
 
 	void Move(const struct FInputActionValue& value);
-	
+	void CursorTrace();
+	class IEnemyInterface* LastActor;
+	IEnemyInterface* ThisActor;
 };
