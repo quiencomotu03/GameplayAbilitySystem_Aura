@@ -16,7 +16,6 @@ class AURA_API AAuraPlayerController : public APlayerController
 
 public:
 	AAuraPlayerController();
-	
 
 
 protected:
@@ -34,6 +33,9 @@ private:
 
 	void Move(const struct FInputActionValue& value);
 	void CursorTrace();
-	class IEnemyInterface* LastActor;
-	IEnemyInterface* ThisActor;
+	
+	TObjectPtr<class IEnemyInterface> LastActor;
+	TObjectPtr<IEnemyInterface> ThisActor;
+
+	
 };
