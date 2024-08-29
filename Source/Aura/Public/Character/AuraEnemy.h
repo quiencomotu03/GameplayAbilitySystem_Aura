@@ -26,4 +26,6 @@ protected:
 	virtual void BeginPlay() override;
 	//UPROPERTY(BlueprintReadOnly)
 	//bool bHighlighted = false;
+
+	virtual void InitAbilityActorInfo() override;
 };

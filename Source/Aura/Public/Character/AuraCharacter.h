@@ -33,6 +33,6 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
-	void InitAbilityActorInfo();
-	
+	//void InitAbilityActorInfo();
+	virtual void InitAbilityActorInfo() override;
 };

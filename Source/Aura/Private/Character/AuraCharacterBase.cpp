@@ -11,8 +11,6 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	
 }
 
 
@@ -21,6 +19,11 @@ void AAuraCharacterBase::BeginPlay()
 	Super::BeginPlay();
 
 	
+	
+}
+
+void AAuraCharacterBase::InitAbilityActorInfo()
+{
 	
 }
 

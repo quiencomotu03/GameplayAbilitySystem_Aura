@@ -32,6 +32,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UAttributeSet> AttributeSet;
+
+	UFUNCTION()
+	virtual void InitAbilityActorInfo();
 	
 private:	
 

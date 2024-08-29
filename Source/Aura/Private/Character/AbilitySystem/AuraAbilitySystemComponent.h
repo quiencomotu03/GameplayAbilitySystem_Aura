@@ -13,5 +13,14 @@ UCLASS()
 class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
+
+public:
+	// when this function is called, we know that the ability actor info has been set
+	void AbilityActorInfoSet();
+
+	protected:
+
+	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec,
+		FActiveGameplayEffectHandle ActiveEffectHandle);
 	
 };
