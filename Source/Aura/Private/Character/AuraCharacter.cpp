@@ -75,5 +75,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 			AuraLOG(Warning, TEXT("AuraHUD IS VALID"));
 		}
 	}
-	
+	InitializeDefaultAttributes();
 }
