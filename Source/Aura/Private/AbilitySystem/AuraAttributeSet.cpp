@@ -12,9 +12,9 @@
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	//By #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName)  All the Attributes can be initialize by Initter
-	InitHealth(10.f);
+	//InitHealth(10.f);
 	//InitMaxHealth(100.f);
-	InitMana(10.f);
+	//InitMana(10.f);
 	//InitMaxMana(50.f);
 }
 

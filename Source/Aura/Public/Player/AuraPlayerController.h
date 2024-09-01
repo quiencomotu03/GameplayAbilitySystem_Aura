@@ -34,8 +34,8 @@ private:
 	void Move(const struct FInputActionValue& value);
 	void CursorTrace();
 	
-	TObjectPtr<class IEnemyInterface> LastActor;
-	TObjectPtr<IEnemyInterface> ThisActor;
+	TScriptInterface<class IEnemyInterface> LastActor;
+	TScriptInterface<IEnemyInterface> ThisActor; 
 
 	
 };

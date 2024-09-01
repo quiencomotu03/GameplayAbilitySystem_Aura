@@ -36,6 +36,13 @@ void AAuraCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	//DOREPLIFETIME(AAuraCharacter, AuraPlayerState);
 }
 
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	const AAuraPlayerState* AuraPlayerState =  GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerLevel();
+}
+
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();

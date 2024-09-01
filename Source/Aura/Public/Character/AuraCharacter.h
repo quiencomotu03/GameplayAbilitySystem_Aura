@@ -29,6 +29,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* CameraComponent;
 
+	virtual int32 GetPlayerLevel() override;
+	
 protected:
 	virtual void BeginPlay() override;
 	
