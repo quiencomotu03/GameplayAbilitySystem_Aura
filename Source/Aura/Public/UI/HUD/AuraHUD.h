@@ -20,7 +20,7 @@ class AURA_API AAuraHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAuraUserWidget> OverlayWidget;
 	
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
