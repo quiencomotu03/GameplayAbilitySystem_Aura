@@ -13,10 +13,13 @@ struct FWidgetControllerParams
 {
 	GENERATED_BODY()
 
-	FWidgetControllerParams() {};
+	FWidgetControllerParams() {};//constructor with empty body
+	//TO receive the 4 variables and also define these 4 Valiables with initializer list btw : and {}
 	FWidgetControllerParams(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
 	: PlayerController(PC), PlayerState(PS), AbilitySystemComponent(ASC), AttributeSet(AS) {}
 
+	//We tend to get compiler warnings when creating structs
+	//when they're member variables are not initialized.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
 
