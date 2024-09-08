@@ -15,6 +15,17 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+DECLARE_DELEGATE_RetVal(FGameplayAttribute, FAttributeSignature);
+
+//typedef is specific to the FGameplayAttribute() signature,
+//but TStaticFunPtr is generic to any signature chosen
+//typedef TBaseStaticDelegateInstnace<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FAttributeFuncPtr;
+
+
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
+
+
 USTRUCT()
 struct FEffectProperties
 {
@@ -64,6 +75,11 @@ public:
 	//Triggered by changes to values (before the change happens)
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
+	
+	// all that we need to do is just add a key value pair to map gameplay tags to each of our attributes
+	//TMap<FGameplayTag, FAttributeSignature TagsToAttributes;
 	
 	/*
 	* Primary Attributes
