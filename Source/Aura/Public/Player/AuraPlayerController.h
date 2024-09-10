@@ -46,4 +46,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<class UAuraInputConfig> InputConfig;
 	
+	UPROPERTY()
+	TObjectPtr<class UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+	
+	UAuraAbilitySystemComponent* GetASC();
+	
 };
