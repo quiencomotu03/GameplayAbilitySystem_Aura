@@ -4,6 +4,8 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Input/AuraInputComponent.h"
+#include "../Aura.h"
 #include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
@@ -39,9 +41,13 @@ void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	//Will get a crach if this cast fails
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	//UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
+	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed,
+		&ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInPutTagHeld);
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -109,4 +115,19 @@ void AAuraPlayerController::CursorTrace()
 			}
 		}
 	}
+}
+
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	AuraLOG(Warning, TEXT("InputTag : %s"), *InputTag.ToString());
+}
+
+void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	AuraLOG(Warning, TEXT("InputTag : %s"), *InputTag.ToString());
+}
+
+void AAuraPlayerController::AbilityInPutTagHeld(FGameplayTag InputTag)
+{
+	AuraLOG(Warning, TEXT("InputTag : %s"), *InputTag.ToString());
 }

@@ -21,6 +21,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
+
+	
 protected:
 
 	virtual void BeginPlay() override;
@@ -49,7 +51,11 @@ protected:
 	UFUNCTION()
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	void InitializeDefaultAttributes() const;
-private:	
 
+	void AddCharacterAbilities();
+private:
+	
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 	
 };

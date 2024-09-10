@@ -15,8 +15,17 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 		FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Secondary_Armor.ToString()));
 }
 
+void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
+{
+	for (TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+}
+
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
-	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+                                                const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
 	//GEngine->AddOnScreenDebugMessage(1, 8.f, FColor::Red,FString("Effect Applied"));
 	FGameplayTagContainer TagContainer;
