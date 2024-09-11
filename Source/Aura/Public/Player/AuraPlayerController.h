@@ -51,4 +51,21 @@ private:
 	
 	UAuraAbilitySystemComponent* GetASC();
 	
+	FVector CachedDestination = FVector::ZeroVector;
+	
+	//How long LMB being pressed == the amount of time that player is following the mouse cursor
+	float FollowTime = 0.0f;
+	//how much time until we no longer consider that to be a short press
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+	
+	bool bTargeting = false;
+	
+	//How close we get to that destination should be a parameter we can change
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class USplineComponent> Spline;
+	
 };

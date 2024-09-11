@@ -8,6 +8,8 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "../Aura.h"
+#include "Components/SplineComponent.h"
+#include "AuraGameplayTags.h"
 #include "Character/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -15,7 +17,7 @@ AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
 
-	
+	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -124,6 +126,17 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	//AuraLOG(Warning, TEXT("InputTag : %s"), *InputTag.ToString());
 	//GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Red, *InputTag.ToString());
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+	    //if this actor is not a null pointer, then this ternary operator expression returns true.
+	    bTargeting = ThisActor ? true : false;
+	    
+	    //set be auto running to false because we don't know yet if it's a short press.
+        //If it's a short press, we're going to auto run
+        // But we don't know that yet until we've released the mouse button.
+	    bAutoRunning = false;
+	    
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -140,8 +153,44 @@ void AAuraPlayerController::AbilityInPutTagHeld(FGameplayTag InputTag)
 	//AuraLOG(Warning, TEXT("InputTag : %s"), *InputTag.ToString());
 	//GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Green, *InputTag.ToString());
 
-	if (GetASC() == nullptr) return;
-	GetASC()->AbilityInputTagHeld(InputTag);
+	//if (GetASC() == nullptr) return;
+	//GetASC()->AbilityInputTagHeld(InputTag);
+	
+	// When LMB is NOT pressed, try to activate the ability 
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+	    if (GetASC())
+	    {
+	        GetASC()->AbilityInputTagHeld(InputTag);
+	    }
+	    return;
+	}
+	//LMB is pressed, and Target the enemy actor
+	if (bTargeting)
+	{
+	    if (GetASC())
+	    {
+	        GetASC()->AbilityInputTagHeld(InputTag);
+	    }
+	}
+	else //if LMB, and Not Targeting Enemy actor -> concerned about Click to Move
+	{
+	    FollowTime += GetWorld()->GetTimeSeconds();
+	    
+	    FHitResult Hit;
+	    if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+	    {
+	        CachedDestination = Hit.ImpactPoint;
+	    }
+	    if (APawn* ControlledPawn = GetPawn())
+	    {
+	        const FVector WorldDirection = 
+	            (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+	        ControlledPawn->AddMovementInput(WorldDirection);
+	    }
+	}
+	
+	
 }
 
 UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
