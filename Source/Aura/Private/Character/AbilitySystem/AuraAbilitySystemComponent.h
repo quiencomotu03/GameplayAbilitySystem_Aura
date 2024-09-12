@@ -32,7 +32,8 @@ public:
 
 protected:
 
-	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec,
+	UFUNCTION(Client, Reliable) // Reliable to reach the Clients
+	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec,
 		FActiveGameplayEffectHandle ActiveEffectHandle);
 	
 };

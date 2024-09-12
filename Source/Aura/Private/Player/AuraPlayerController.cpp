@@ -30,45 +30,16 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor;
-	//ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
 	ThisActor = CursorHit.GetActor();
 
-	if (LastActor == nullptr)
+	if (LastActor != ThisActor)
 	{
-		if (ThisActor != nullptr)
-		{
-			//Lastactor nullptr , This actor is not nullptr -> thisactor->highlight
-			ThisActor->HighlightActor();
-		}
-		else
-		{
-			//Cast - both are null, do nothing
-			
-		}
-	}
-	else //LastActor is valid
-	{
-		if  (ThisActor == nullptr)
-		{
-			LastActor->UnHighlightActor();
-		}
-		else
-		{
-			if (LastActor != ThisActor)//Both valid, but lastactor is not this actor
-			{
-				LastActor->UnHighlightActor(); // 이전 액터는 unhighlight
-				ThisActor->HighlightActor(); //this actor ->highlight
-			}
-			else //both are valid, and they are same
-			{
-				//Do nothing
-			}
-		}
+		if (LastActor) LastActor->UnHighlightActor();
+		if (ThisActor) ThisActor->HighlightActor();
 	}
 }
 
@@ -152,23 +123,17 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	//GetASC()->AbilityInputTagReleased(InputTag);
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagReleased(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 		return;
 	}
 
 	if (bTargeting)
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagReleased(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 	}
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
@@ -202,27 +167,17 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	// When LMB is NOT pressed, try to activate the ability 
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 		return;
 	}
 	if (bTargeting)
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}
 	else
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
-		{
-			CachedDestination = Hit.ImpactPoint;
-		}
+		if (CursorHit.bBlockingHit) CachedDestination = CursorHit.ImpactPoint;
 		if (APawn* ControlledPawn = GetPawn())
 		{
 			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
