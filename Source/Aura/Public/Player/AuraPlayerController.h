@@ -41,14 +41,13 @@ private:
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
-	void AbilityInPutTagHeld(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<class UAuraInputConfig> InputConfig;
 	
 	UPROPERTY()
 	TObjectPtr<class UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
-	
 	UAuraAbilitySystemComponent* GetASC();
 	
 	FVector CachedDestination = FVector::ZeroVector;
@@ -67,5 +66,7 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USplineComponent> Spline;
+	
+	void AutoRun();
 	
 };

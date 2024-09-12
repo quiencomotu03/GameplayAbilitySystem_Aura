@@ -5,7 +5,6 @@
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "AuraGameplayTags.h"
 
-#include "../../Aura/Aura.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -55,7 +54,7 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			AbilitySpecInputPressed(AbilitySpec);
+			AbilitySpecInputReleased(AbilitySpec);
 		}
 	}
 }
