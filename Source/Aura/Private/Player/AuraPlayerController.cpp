@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Player/AuraPlayerController.h"
+#include "DrawDebugHelpers.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Input/AuraInputComponent.h"
@@ -10,6 +10,8 @@
 #include "../Aura.h"
 #include "Components/SplineComponent.h"
 #include "AuraGameplayTags.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "Character/AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -144,8 +146,48 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	//AuraLOG(Warning, TEXT("InputTag : %s"), *InputTag.ToString());
 	//GEngine->AddOnScreenDebugMessage(2, 3.0f, FColor::Blue, *InputTag.ToString());
 
-	if (GetASC() == nullptr) return;
-	GetASC()->AbilityInputTagReleased(InputTag);
+	//if (GetASC() == nullptr) return;
+	//GetASC()->AbilityInputTagReleased(InputTag);
+	
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+		return;
+	}
+
+	if (bTargeting)
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+	}
+	else //ClicktoMove 여기 안들어오는듯 ?!?!?
+	{
+		APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			AuraLOG(Warning, TEXT("AbilityInputTagReleased_01"));
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+			{
+				AuraLOG(Warning, TEXT("AbilityInputTagReleased_02"));
+				Spline->ClearSplinePoints();
+				for (const FVector& PointLoc : NavPath->PathPoints)
+				{
+					AuraLOG(Warning, TEXT("AbilityInputTagReleased_03"));
+					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+					DrawDebugSphere(GetWorld(), PointLoc, 8.f, FColor::Green);
+					AuraLOG(Warning, TEXT("AbilityInputTagReleased_04"));
+				}
+				bAutoRunning = true;
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 void AAuraPlayerController::AbilityInPutTagHeld(FGameplayTag InputTag)
