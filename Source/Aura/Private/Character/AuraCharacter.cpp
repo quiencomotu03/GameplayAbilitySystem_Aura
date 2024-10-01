@@ -46,7 +46,7 @@ int32 AAuraCharacter::GetPlayerLevel()
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	AuraLOG_S(Warning);
+	//AuraLOG_S(Warning);
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)
@@ -73,7 +73,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 	Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
-	AuraLOG(Warning, TEXT("InitAbilityActorInfo is called"));
+	//AuraLOG(Warning, TEXT("InitAbilityActorInfo is called"));
 
 	//AAuraHUD* HUD = GetController<AAuraHUD>();
 	if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(GetController()))
@@ -81,7 +81,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPC->GetHUD()))
 		{
 			AuraHUD->InitOverlay(AuraPC, AuraPlayerState, AbilitySystemComponent, AttributeSet);
-			AuraLOG(Warning, TEXT("AuraHUD IS VALID"));
+			//AuraLOG(Warning, TEXT("AuraHUD IS VALID"));
 		}
 	}
 	InitializeDefaultAttributes();

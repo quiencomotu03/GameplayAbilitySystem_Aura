@@ -12,4 +12,5 @@ DECLARE_LOG_CATEGORY_EXTERN(Aura, Log, All);
 #define DrawDebugSphere(World, Center, Radius, Color) DrawDebugSphere(World, Center, Radius, 12, Color, false, -1.f, 0.f, 1.f);
 
 #define CUSTOM_DEPTH_RED 250
+#define ECC_Projectile ECollisionChannel::ECC_GameTraceChannel1
 
