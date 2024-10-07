@@ -6,11 +6,15 @@
 #include "GameFramework/PlayerController.h"
 #include "Input/AuraInputConfig.h"
 #include "GameplayTagContainer.h"
+#include "UI/Widget/DamageTextComponent.h"
 #include "AuraPlayerController.generated.h"
 
 /**
  * 
  */
+
+class UDamageTextComponent;
+
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
 {
@@ -19,6 +23,8 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController();
 
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 
 protected:
 
@@ -76,5 +82,8 @@ private:
 	TObjectPtr<class USplineComponent> Spline;
 	
 	void AutoRun();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 	
 };

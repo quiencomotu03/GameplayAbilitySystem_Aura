@@ -10,6 +10,8 @@
 #include "Interface/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UAnimMontage;
+
 UCLASS()
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
@@ -21,8 +23,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
+	virtual void Die() override;
 
-	
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 protected:
 
 	virtual void BeginPlay() override;
@@ -38,6 +42,7 @@ protected:
 	 */
 	
 	virtual FVector GetCombatSocketLocation() override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 
 	/*
 	 ~ ICombatInterface
@@ -66,9 +71,29 @@ protected:
 	virtual void InitializeDefaultAttributes() const;
 
 	void AddCharacterAbilities();
+
+	/*
+	 * Dissolve Effects
+	 */
+
+	void Dissolve();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeLine(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeLine(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 private:
 	
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 	
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

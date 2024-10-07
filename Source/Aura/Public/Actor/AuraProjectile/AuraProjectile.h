@@ -29,7 +29,7 @@ public:
 	
 protected:
 
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 	virtual void Destroyed() override;
 
 	UFUNCTION()
