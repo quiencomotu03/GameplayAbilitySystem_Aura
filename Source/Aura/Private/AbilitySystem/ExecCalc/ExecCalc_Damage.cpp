@@ -79,9 +79,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	++Armor;*/
 
 	//Get Damage Set by Caller Magnitude
-	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
-
-	
+	//float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
+	float Damage =0.f;
+	//for (FGameplayTag DamageTypeTag :FAuraGameplayTags::Get().DamageTypes)
+	for (const TTuple<FGameplayTag, FGameplayTag>& Pair  : FAuraGameplayTags::Get().DamageTypesToResistances)
+	{
+	    const float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
+        Damage += DamageTypeValue;
+	}
 	
 	//계산된 Armor 값을 사용하여 새로운 GameplayModifierEvaluatedData를 생성하고, 이를 OutExecutionOutput에 추가
 	//const FGameplayModifierEvaluatedData EvaluatedData(DamageStatics().ArmorProperty, EGameplayModOp::Additive, Armor);
