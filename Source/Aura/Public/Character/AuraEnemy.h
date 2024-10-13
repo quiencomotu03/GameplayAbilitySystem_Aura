@@ -22,6 +22,7 @@ public:
 	AAuraEnemy();
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	virtual void PossessedBy(AController* NewController) override;
 	
 	//combat interface
 	virtual int32 GetPlayerLevel() override;
@@ -61,4 +62,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UWidgetComponent> HealthBar;
+	
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<class UBehaviorTree> BehaviorTree;
+	
+	UPROPERTY()
+	TObjectPtr<class AAuraAIController> AuraAIController;
 };

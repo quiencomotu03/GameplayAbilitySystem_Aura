@@ -2,4 +2,16 @@
 
 
 #include "AI/AuraAIController.h"
+#include "Aura/Aura.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
+AAuraAIController::AAuraAIController()
+{
+	Blackboard = CreateDefaultSubobject<UBlackboardComponent>("BlackboardComponent");
+	check(Blackboard);
+	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>("BehaviorTreeComponent");
+	check(BehaviorTreeComponent);
+	AuraLOG(Warning, TEXT("%s is Valid"), *BehaviorTreeComponent->GetName());
+	
+}
