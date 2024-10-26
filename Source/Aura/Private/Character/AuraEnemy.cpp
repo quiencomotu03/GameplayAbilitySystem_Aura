@@ -28,13 +28,19 @@ AAuraEnemy::AAuraEnemy()
 	
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	GetCharacterMovement()->RotationRate.Yaw = 360.0; //Rotationrate Z =360
 }
 
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	check(AbilitySystemComponent);
+	//check(AbilitySystemComponent);
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	//AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	//AuraLOG(Warning, TEXT("Ability System Component Initialized"));
@@ -42,7 +48,7 @@ void AAuraEnemy::BeginPlay()
 	
 	if (HasAuthority())
 	{
-	    UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	    UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 	
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
@@ -122,7 +128,8 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 	AuraAIController = Cast<AAuraAIController>(NewController);
 	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	AuraAIController->RunBehaviorTree(BehaviorTree);
-	
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::Warrior);
 }
 
 int32 AAuraEnemy::GetPlayerLevel()
@@ -136,8 +143,23 @@ void AAuraEnemy::Die()
 	Super::Die();
 }
 
+void AAuraEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	//IEnemyInterface::SetCombatTarget_Implementation(InCombatTarget);
+	CombatTarget = InCombatTarget;
+}
+
+AActor* AAuraEnemy::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
+}
+
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
     bHitReacting = NewCount >0;
     GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	if (AuraAIController && AuraAIController->GetBlackboardComponent())
+	{
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
+	}
 }
