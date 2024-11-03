@@ -27,6 +27,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	CallPythonScript_Implementation();
 
 }
 
@@ -77,6 +78,30 @@ void AAuraCharacterBase::Dissolve()
 		Weapon->SetMaterial(0, WeaponDynamicMatInst);
 		StartWeaponDissolveTimeLine(WeaponDynamicMatInst);
 	}
+}
+
+void AAuraCharacterBase::CallPythonScript_Implementation()
+{
+	//FString Command = TEXT("\"C:\\Users\\quien\\Documents\\Unreal Projects\\Aura\\PythonScript\\AuraPythonScript\\my_script.py\"");
+	//FPlatformProcess::CreateProc(TEXT("python"), *Command, true, false, false, nullptr, 0, nullptr, nullptr);
+
+
+	// Unreal Engine의 내장 Python 인터프리터 경로 지정
+	FString PythonPath = TEXT("C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Binaries\\ThirdParty\\Python3\\Win64\\pythonw.exe");
+	FString ScriptPath = TEXT("C:/Users/quien/Documents/Unreal Projects/Aura/PythonScript/AuraPythonScript/my_script.py");
+
+	FString Params = FString::Printf(TEXT("\"%s\""), *ScriptPath);
+	FString Output;
+	FString Errors;
+
+	int32 ReturnCode = -1;
+	FPlatformProcess::ExecProcess(*PythonPath, *Params, &ReturnCode, &Output, &Errors);
+
+	UE_LOG(LogTemp, Warning, TEXT("Output: %s"), *Output);
+	UE_LOG(LogTemp, Warning, TEXT("Errors: %s"), *Errors);
+	UE_LOG(LogTemp, Warning, TEXT("Return Code: %d"), ReturnCode);
+	
+	UE_LOG(LogTemp, Warning, TEXT("CallPythonScript Called"));
 }
 
 
@@ -156,4 +181,10 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
 	bDead = true;
+}
+
+UNiagaraSystem* AAuraCharacterBase::GetBloodEffect_Implementation()
+{
+    return BloodEffect;
+
 }

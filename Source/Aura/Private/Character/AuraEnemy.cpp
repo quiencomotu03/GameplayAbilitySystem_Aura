@@ -100,7 +100,7 @@ void AAuraEnemy::HighlightActor()
 {
 	//bHighlighted = true;
 	//AuraLOG_S(Warning);
-	AuraLOG(Warning, TEXT("%s is overlapped and highlighted"), *GetName());
+	//(Warning, TEXT("%s is overlapped and highlighted"), *GetName());
 	//DrawDebugSphere(GetWorld(), GetActorLocation(), 100.f, FColor::Blue);
 
 	GetMesh()->SetRenderCustomDepth(true);
@@ -113,7 +113,7 @@ void AAuraEnemy::UnHighlightActor()
 {
 	//bHighlighted = false;
 	//AuraLOG_S(Warning);
-	AuraLOG(Warning, TEXT("%s is now not overlapped and UNhighlighted"), *GetName());
+	//AuraLOG(Warning, TEXT("%s is now not overlapped and UNhighlighted"), *GetName());
 	//DrawDebugSphere(GetWorld(), GetActorLocation(), 100.f, FColor::Red);
 
 	GetMesh()->SetRenderCustomDepth(false);
@@ -140,6 +140,7 @@ int32 AAuraEnemy::GetPlayerLevel()
 void AAuraEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
+	if (AuraAIController) AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	Super::Die();
 }
 

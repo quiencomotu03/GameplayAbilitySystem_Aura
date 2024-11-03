@@ -12,6 +12,6 @@ AAuraAIController::AAuraAIController()
 	check(Blackboard);
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>("BehaviorTreeComponent");
 	check(BehaviorTreeComponent);
-	AuraLOG(Warning, TEXT("%s is Valid"), *BehaviorTreeComponent->GetName());
+	//AuraLOG(Warning, TEXT("%s is Valid"), *BehaviorTreeComponent->GetName());
 	
 }

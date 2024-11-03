@@ -11,8 +11,8 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::ClientEffectApplied);
 
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::MakeRandomColor(),
-		FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Secondary_Armor.ToString()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::MakeRandomColor(),
+		//FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Secondary_Armor.ToString()));
 }
 
 void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)

@@ -11,6 +11,7 @@
 #include "AuraCharacterBase.generated.h"
 
 class UAnimMontage;
+class UNiagaraSystem;
 
 UCLASS()
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -38,6 +39,7 @@ public:
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	
 	/*
 	 ~ ICombatInterface
@@ -50,7 +52,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	TObjectPtr<class USkeletalMeshComponent> Weapon;
 	
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -103,6 +105,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Combat")
+	UNiagaraSystem* BloodEffect;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void CallPythonScript();
+	
 private:
 
 	bool bDead = false;
@@ -112,4 +121,5 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+	
 };
