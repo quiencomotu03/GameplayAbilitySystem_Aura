@@ -5,6 +5,8 @@
 #include "../Aura.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemInterface.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "SWarningOrErrorBox.h"
 #include "Character/AbilitySystem/AuraAttributeSet.h"
 
@@ -35,10 +37,36 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<clas
 	checkf(GameplayEffectClass, TEXT("GameplayEffectClass is not Valid"));
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(this);
+
+	// 폭발 위치 설정
+	FVector ExplosionLocation = GetActorLocation();
+	UPrimitiveComponent* RootPrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
+	if (RootPrimitiveComponent)
+	{
+		FHitResult HitResult;
+		HitResult.Location = ExplosionLocation;
+		HitResult.ImpactPoint = ExplosionLocation;
+		HitResult.Component = RootPrimitiveComponent;
+		HitResult.HitObjectHandle = FActorInstanceHandle(this);
+
+		EffectContextHandle.AddHitResult(HitResult);
+	}//
 	const FGameplayEffectSpecHandle EffectSpecHandle =
 		TargetASC->MakeOutgoingSpec(GameplayEffectClass, ActorLevel, EffectContextHandle);
 	
 	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	// HitResult에서 위치 정보를 가져와서 폭발 효과 생성
+	const FHitResult* StoredHitResult = EffectContextHandle.GetHitResult();
+	if (StoredHitResult)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Triggering explosion from hit result"));
+		TriggerExplosionEffect(StoredHitResult->ImpactPoint);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Triggering explosion from actor location"));
+		TriggerExplosionEffect(ExplosionLocation);
+	}//
 	
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == 
 	EGameplayEffectDurationType::Infinite;
@@ -57,17 +85,17 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectsToEnemies) return;
 	
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
-    {
-    	ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
-   	}
-    if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
-    {
-    	ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
-    }
-    if (InfiniteEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
-    {
-    	ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
-    }
+	{
+		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+	if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
+	}
+	if (InfiniteEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+	}
 }
 
 void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
@@ -106,7 +134,31 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
     		ActiveEffectHandles.FindAndRemoveChecked(Handle);
     	}
     }
+
+	GetWorldTimerManager().ClearTimer(EffectTimerHandle);
 }
+
+void AAuraEffectActor::TriggerExplosionEffect(const FVector& Location)
+{
+	if (ExplosionEffect)
+	{
+		// Niagara 시스템을 Location에서 생성하고, 반환된 컴포넌트를 확인합니다.
+		UNiagaraComponent* SpawnedEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionEffect, Location);
+		if (SpawnedEffect)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Niagara Effect successfully spawned at: %s"), *Location.ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to spawn Niagara Effect at: %s"), *Location.ToString());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ExplosionEffect is null!"));
+	}
+}
+
 
 
 void AAuraEffectActor::Tick(float DeltaTime)

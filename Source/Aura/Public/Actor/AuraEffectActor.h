@@ -5,8 +5,10 @@
 #include "EngineMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameplayEffectTypes.h"
+#include "NiagaraSystem.h"
 #include "AuraEffectActor.generated.h"
 
+class UNiagaraComponent;
 class UAbilitySystemComponent;
 
 UENUM(BlueprintType)
@@ -79,6 +81,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	float ActorLevel = 1.f;
+
+	//MyOwnTest to explore and sound effect
+
+	void TriggerExplosionEffect(const FVector& Location);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect")
+	class UNiagaraSystem* ExplosionEffect;
+
+	FTimerHandle EffectTimerHandle;
+	
 	
 private:	
 
