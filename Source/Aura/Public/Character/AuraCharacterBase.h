@@ -40,6 +40,9 @@ public:
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Montage) override;
+	virtual int32 GetMinionCount_Implementation() override;
+	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	
 	/*
 	 ~ ICombatInterface
@@ -63,6 +66,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName RightHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName TailSocketName;
 
 	UPROPERTY()
 	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
@@ -111,6 +117,12 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void CallPythonScript();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat")
+	USoundBase* DeathSound;
+
+	/*Minions*/
+	int32 MinionCount=0;
 	
 private:
 

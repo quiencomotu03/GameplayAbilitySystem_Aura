@@ -58,6 +58,7 @@ void AAuraProjectile::Destroyed()
         UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
         UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
         if (LoopingSoundComponent) LoopingSoundComponent->Stop();
+    	bHit = true;
     }
     Super::Destroyed();
 }
@@ -79,9 +80,11 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 	if (!bHit)
 	{
-	    UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		//UE_LOG(LogTemp, Warning, TEXT("[%s] spawn"), *GetName());
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	    UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	    if (LoopingSoundComponent) LoopingSoundComponent->Stop();
+		bHit=true;
 	}
 	
 	if(HasAuthority()) // On Server OnSphereOverlap will be called -> impactSound and impactEffect will be spawn

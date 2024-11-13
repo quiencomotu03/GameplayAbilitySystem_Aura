@@ -25,6 +25,7 @@ void AAuraEffectActor::BeginPlay()
 	
 	//Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraEffectActor::OnOverlap);
 	//Sphere->OnComponentEndOverlap.AddDynamic(this, &AAuraEffectActor::EndOverlap);
+	
 }
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<class UGameplayEffect> GameplayEffectClass)
@@ -36,7 +37,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<clas
 
 	checkf(GameplayEffectClass, TEXT("GameplayEffectClass is not Valid"));
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
-	EffectContextHandle.AddSourceObject(this);
+	EffectContextHandle.AddSourceObject(this);//TargetActor를 ContextHandle에 저장/ e.g. targetActor , Location ect..
 
 	// 폭발 위치 설정
 	FVector ExplosionLocation = GetActorLocation();
@@ -49,14 +50,16 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<clas
 		HitResult.Component = RootPrimitiveComponent;
 		HitResult.HitObjectHandle = FActorInstanceHandle(this);
 
-		EffectContextHandle.AddHitResult(HitResult);
+		EffectContextHandle.AddHitResult(HitResult);//HitResult(location impactPoint등을 contextHandle에 저장
 	}//
+	
 	const FGameplayEffectSpecHandle EffectSpecHandle =
 		TargetASC->MakeOutgoingSpec(GameplayEffectClass, ActorLevel, EffectContextHandle);
 	
 	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+
 	// HitResult에서 위치 정보를 가져와서 폭발 효과 생성
-	const FHitResult* StoredHitResult = EffectContextHandle.GetHitResult();
+	const FHitResult* StoredHitResult = EffectContextHandle.GetHitResult();//contexthandle에 저장된 HitResult결과를 저장
 	if (StoredHitResult)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Triggering explosion from hit result"));
@@ -67,12 +70,13 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<clas
 		UE_LOG(LogTemp, Warning, TEXT("Triggering explosion from actor location"));
 		TriggerExplosionEffect(ExplosionLocation);
 	}//
-	
+
+	//if EffectSpecHandl에서 durationpolicy= infinite일때... ->true면 
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == 
 	EGameplayEffectDurationType::Infinite;
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
-	    ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
+	    ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);//ActiveEffectHandle Map에 저장 -> Endoverlap시 종료해주기 위해
 	}
 	if (!bIsInfinite)
 	{
@@ -123,6 +127,7 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
     	TArray<FActiveGameplayEffectHandle> HandlesToRemove;
     	for (TTuple<FActiveGameplayEffectHandle, UAbilitySystemComponent*> HandlePair : ActiveEffectHandles)
     	{
+    		//TargetASC가 저장되어있는 HandlePair의 ASC Value값과 같으면
     		if (TargetASC == HandlePair.Value)
     		{
     			TargetASC->RemoveActiveGameplayEffect(HandlePair.Key, 1);
@@ -134,8 +139,6 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
     		ActiveEffectHandles.FindAndRemoveChecked(Handle);
     	}
     }
-
-	GetWorldTimerManager().ClearTimer(EffectTimerHandle);
 }
 
 void AAuraEffectActor::TriggerExplosionEffect(const FVector& Location)

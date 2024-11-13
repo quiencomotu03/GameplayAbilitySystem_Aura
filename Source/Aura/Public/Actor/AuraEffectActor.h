@@ -89,7 +89,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect")
 	class UNiagaraSystem* ExplosionEffect;
 
-	FTimerHandle EffectTimerHandle;
+
 	
 	
 private:	
